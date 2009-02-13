@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=SnowballZ Beta1
+GenericName=Real-time Strategy Game
+Comment=A real-time strategy game where you command your army of penguins
+Exec=snowballz
+Icon=snowballz
+Terminal=false
+Type=Application
+Categories=Game;StrategyGame;
