@@ -2,7 +2,7 @@
 
 Name:           snowballz
 Version:        1.0
-Release:        0.5.%{hgver}%{?dist}
+Release:        0.6.%{hgver}%{?dist}
 Summary:        A Fun Real Time Strategy Game Featuring Snowball Fights with Penguins
 Group:          Amusements/Games
 License:        MIT
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %{_mandir}/man6/%{name}.*
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 1.0-0.6.beta1.20090110hg
+- rebuild for new F11 features
+
 * Wed Feb 04 2009 Orcan Ogetbil <oget [DOT] fedora [AT] gmail [DOT] com> 1.0-0.5.beta1.20090110hg
 - Updated description
 
