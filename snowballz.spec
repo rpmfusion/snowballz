@@ -2,7 +2,7 @@
 
 Name:           snowballz
 Version:        1.0
-Release:        0.7.%{hgver}%{?dist}
+Release:        0.8.%{hgver}%{?dist}
 Summary:        A Fun Real Time Strategy Game Featuring Snowball Fights with Penguins
 Group:          Amusements/Games
 License:        MIT
@@ -21,6 +21,9 @@ Source5:        %{name}
 Source99:       %{name}-snapshot.sh
 # Don't create a cache file in %%{_datadir}
 Patch0:         %{name}-dontcache.patch
+# Use simplejson instead of cjson which is not available in F-12+
+# Patch sent upstream via email
+Patch1:         %{name}-json.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -29,7 +32,10 @@ BuildRequires:  python-setuptools-devel
 BuildRequires:  desktop-file-utils
 
 Requires:       pyglet
-Requires:       python-cjson
+%if 0%{?fedora} < 11
+Requires:       python-simplejson
+%endif
+Requires:       python-imaging
 Requires:       python-iniparse
 Requires:       python-rabbyt
 
@@ -49,6 +55,7 @@ Interested folks should refer to the project website.
 %prep
 %setup -q -n %{name}
 %patch0 -p1 -b .dontcache
+%patch1 -p1 -b .json
 cp %{SOURCE1} setup.py
 
 # Change the hardcoded path with a macro:
@@ -104,6 +111,10 @@ rm -rf %{buildroot}
 %{_mandir}/man6/%{name}.*
 
 %changelog
+* Mon Jun 01 2009 Orcan Ogetbil <oget [DOT] fedora [AT] gmail [DOT] com> 1.0-0.8.beta1.20090512hg
+- Use simplejson (natively available in python2.6+) instead of cjson
+- Add missing Requires: python-imaging
+
 * Tue May 12 2009 Orcan Ogetbil <oget [DOT] fedora [AT] gmail [DOT] com> 1.0-0.7.beta1.20090512hg
 - New snapshot
 
