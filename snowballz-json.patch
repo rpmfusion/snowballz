@@ -1,0 +1,61 @@
+diff -rupN snowballz.old/lib/map/model.py snowballz/lib/map/model.py
+--- snowballz.old/lib/map/model.py	2009-05-12 14:35:02.000000000 -0400
++++ snowballz/lib/map/model.py	2009-05-24 23:23:05.000000000 -0400
+@@ -1,11 +1,14 @@
+ from __future__ import division
+ import sys
+ try:
+-    import cjson as json
++    import json
+ except ImportError:
+-    print "Install cjson"
+-    print "(easy_install python-cjson)"
+-    sys.exit(0)
++    try:
++        import simplejson as json
++    except ImportError:
++        print "Install simplejson"
++        print "(easy_install python-simplejson)"
++        sys.exit(0)
+ 
+ import Image
+ import os, rabbyt
+@@ -49,7 +52,7 @@ class MapModel(object):
+ 
+         # Load map
+         assert p.push("Decode settings")
+-        self.config = config = json.decode(open(os.path.join("data", "maps", name,
++        self.config = config = json.loads(open(os.path.join("data", "maps", name,
+                 "settings.json")).read())
+         self.use_day_night = int(config["map"]["use_day_night"])
+         self.day_cycle_time = int(config["map"]["day_cycle_time"])
+diff -rupN snowballz.old/map_editor.py snowballz/map_editor.py
+--- snowballz.old/map_editor.py	2009-05-12 14:35:02.000000000 -0400
++++ snowballz/map_editor.py	2009-05-24 23:30:28.000000000 -0400
+@@ -28,8 +28,15 @@ from lib.map.model import StaticMapObjec
+ from lib.map.display import StaticMapObjectView
+ from lib.building import BUILDINGS
+ 
+-import cjson as json
+-
++try:
++    import json
++except ImportError:
++    try:
++        import simplejson as json
++    except ImportError:
++        print "Install simplejson"
++        print "(easy_install python-simplejson)"
++        sys.exit(0)
+ 
+ def create_resource(map, tile, type, rot=0, id=None):
+     t = TYPES[type]
+@@ -252,7 +259,7 @@ class DummyCtrl(GameControl):
+ 
+         # Write settings file
+         fp = file(os.path.join("data", "maps", map.name, "settings.json"), "w")
+-        fp.write(json.encode(map.config))
++        fp.write(json.dumps(map.config))
+ 
+         # Paths
+         f = open(os.path.join("data", "maps", map.name, "paths.txt"), "w")
