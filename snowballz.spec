@@ -1,8 +1,8 @@
-%define hgver alpha1.20090512hg
+%global hgver alpha1.20091118hg
 
 Name:           snowballz
 Version:        1.0
-Release:        0.8.%{hgver}%{?dist}
+Release:        0.9.%{hgver}%{?dist}
 Summary:        A Fun Real Time Strategy Game Featuring Snowball Fights with Penguins
 Group:          Amusements/Games
 License:        MIT
@@ -16,7 +16,6 @@ Source3:        %{name}.desktop
 Source4:        %{name}.6
 # The wrapper script
 Source5:        %{name}
-
 # The hg-fetch script
 Source99:       %{name}-snapshot.sh
 # Don't create a cache file in %%{_datadir}
@@ -24,6 +23,8 @@ Patch0:         %{name}-dontcache.patch
 # Use simplejson instead of cjson which is not available in F-12+
 # Patch sent upstream via email
 Patch1:         %{name}-json.patch
+# Use our serafettin cartoon fonts instead of the bundled one
+Patch2:         %{name}-fonts.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -31,6 +32,7 @@ BuildArch:      noarch
 BuildRequires:  python-setuptools-devel
 BuildRequires:  desktop-file-utils
 
+Requires:       font(serafettincartoon)
 Requires:       pyglet
 %if 0%{?fedora} < 11
 Requires:       python-simplejson
@@ -38,7 +40,6 @@ Requires:       python-simplejson
 Requires:       python-imaging
 Requires:       python-iniparse
 Requires:       python-rabbyt
-
 
 %description
 Take command of your army of penguins as you blaze your path to victory! March
@@ -56,6 +57,8 @@ Interested folks should refer to the project website.
 %setup -q -n %{name}
 %patch0 -p1 -b .dontcache
 %patch1 -p1 -b .json
+%patch2 -p1 -b .fonts
+
 cp %{SOURCE1} setup.py
 
 # Change the hardcoded path with a macro:
@@ -64,17 +67,11 @@ touch -r %{SOURCE5} %{name}-wrapper
 
 %build
 python setup.py build
-pushd snowui
-   python setup.py build
-popd
 
 %install
 rm -rf %{buildroot}
 
 python setup.py install --skip-build --root %{buildroot} --install-lib %{_datadir}/%{name}
-pushd snowui
-   python setup.py install --skip-build --root %{buildroot} --install-lib %{_datadir}/%{name}
-popd
 
 # Kill the egg since the eggs are only needed in python
 # libraries that go to site-packages.
@@ -93,9 +90,8 @@ install -p -D -m 0644 %{SOURCE2} %{buildroot}%{_datadir}/pixmaps/%{name}.xpm
 
 install -p -D -m 0755 %{name}-wrapper %{buildroot}%{_bindir}/%{name}
 
-for txtfile in COPYING README CHANGELOG; do
-   mv snowui/$txtfile $txtfile.snowui
-done
+# Create symlink for font
+ln -s ../../fonts/serafettin-cartoon/SerafettinCartoon.ttf %{buildroot}%{_datadir}/%{name}/data/
 
 %clean
 rm -rf %{buildroot}
@@ -103,7 +99,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING* README* CHANGELOG*
+%doc README
 %{_bindir}/%{name}
 %{_datadir}/%{name}
 %{_datadir}/pixmaps/%{name}.xpm
@@ -111,6 +107,9 @@ rm -rf %{buildroot}
 %{_mandir}/man6/%{name}.*
 
 %changelog
+* Wed Nov 18 2009 Orcan Ogetbil <oget [DOT] fedora [AT] gmail [DOT] com> 1.0-0.9.alpha1.20091118hg
+- Update to latest snapshot (upstream dropped from beta to alpha)
+
 * Mon Jun 01 2009 Orcan Ogetbil <oget [DOT] fedora [AT] gmail [DOT] com> 1.0-0.8.beta1.20090512hg
 - Use simplejson (natively available in python2.6+) instead of cjson
 - Add missing Requires: python-imaging
