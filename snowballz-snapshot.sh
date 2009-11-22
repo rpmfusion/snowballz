@@ -31,11 +31,7 @@ rm -fr $name/.hg*
 # Removing the shipped fonts
 # No fonts are allowed in Fedora in non-font packages
 rm $name/data/*.ttf
-cd $name
-# Get the snowui which will be a part of snowballz final release
-hg clone http://freehg.org/u/joey/snowui/ 
-rm -fr snowui/.hg*
-cd ..
+
 tar jcf "$pwd"/$name-$version.$hg.tar.bz2 $name
-echo "Written: $name-$version-$hg.tar.bz2"
+echo "Written: $name-$version.$hg.tar.bz2"
 cd - >/dev/null
